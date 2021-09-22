@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Application1</string>
+    <string name="hello">hello world</string>
+    <string name="moon">输入您的体重（kg）</string>
+    <string name="moon1">输入您的身高（m）</string>
+    <string name="bt1">评估</string>
+</resources>
