@@ -3,6 +3,7 @@ package com.example.application1;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,8 +15,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +35,9 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
@@ -87,10 +92,9 @@ public class MainActivity2 extends AppCompatActivity implements Runnable {
 
         handler=new Handler(Looper.myLooper()){
             public void handleMessage(Message msg){
-                if(msg.what==5){
+                if(msg.what==7){
                     String str=(String) msg.obj;
                     Log.i(TAG,"handleMessae: getMessage="+str);
-
                 }
                 super.handleMessage(msg);
             }
@@ -166,10 +170,6 @@ public class MainActivity2 extends AppCompatActivity implements Runnable {
 
     }
 
-    private void loadFromSP() {
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,10 +210,9 @@ public class MainActivity2 extends AppCompatActivity implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Message msg=handler.obtainMessage(5);
-        msg.obj="Hello from run()";
+        Message msg=handler.obtainMessage(7);
+        msg.obj="hello";
         handler.sendMessage(msg);
-
         try {
             Document doc = Jsoup.connect("https://www.usd-cny.com/bankofchina.htm").get();
             Elements rate_info  = doc.select("tr:matches(美元|欧元|日元)");
@@ -224,12 +223,19 @@ public class MainActivity2 extends AppCompatActivity implements Runnable {
 
                 float ex_rate = 100/Float.valueOf(tds.get(5).text());
                 Log.i(TAG, "run: rate of"+Currency+":"+String.format("%.2f",ex_rate));
-                if(Currency.equals("美元")) dr=(double)ex_rate;
-                else if(Currency.equals("欧元")) ur=(double)ex_rate;
-                else jr=(double)ex_rate;
+                if(Currency.equals("美元")){
+                    dr=(double)ex_rate;
+                }
+                else if(Currency.equals("欧元")){
+                    ur=(double)ex_rate;
+                }
+                else{
+                    jr=(double)ex_rate;
+                }
 
 
             }
+
             SharedPreferences sh=getSharedPreferences("my_rate", Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor=sh.edit();
             editor.putFloat("dr",(float) dr);
